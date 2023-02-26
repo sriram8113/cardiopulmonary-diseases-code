@@ -1,4 +1,4 @@
-The following steps were performed on a dataset related to symptoms of diseases:
+The following steps were performed on a dataset related to heart diseases:
 There are no missing values in the dataset, as can be seen in figure 1 above.
 Duplicate values were found and eliminated.
 There are some wrong values in the dataset, which were found by looking at the unique values of each column.
