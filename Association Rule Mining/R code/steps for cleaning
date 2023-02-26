@@ -1,0 +1,21 @@
+Following are the steps for cleaning and formatting the Disease symptoms dataset:
+
+The NaN values were filled using the forward fill method.
+Duplicate values were detected and removed.
+The columns "disease" and "symptoms" were selected, and the "UMLS:c08096" value was removed by splitting the data using the split method and separator "_".
+The find method was used to identify any other values containing the "UMLS" string, and these values were replaced with an empty string in both the "disease" and "symptoms" columns.
+The count of disease occurrence column was dropped.
+A new dictionary is created to store the unique diseases and their corresponding symptoms.
+A new data frame is created with the unique values of the symptoms as the column names.
+The "index" column is dropped, and the index was reset.
+The symptoms corresponding to the diseases are filled with a value of 1, and the remaining missing values were filled with 0.
+The "disease" column was appended to the dataset.steps used in cleaning
+
+Transforming data :
+
+The following data preprocessing steps were performed:
+
+The diseases column, which served as the label for the data, was dropped.
+Both the column names and row names were removed.
+Any missing or null values were replaced with empty.
+Finally, the transaction function was used to convert the entire dataset into transactions.
