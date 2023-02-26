@@ -1,0 +1,22 @@
+The following steps were performed on a dataset related to heart diseases:
+
+There are no missing values in the dataset, as can be seen in figure 1 above.
+Duplicate values were found and eliminated.
+There are some wrong values in the dataset, which were found by looking at the unique values of each column.
+Dealing with wrong values column by column as there were missing values in all of the columns.
+There are no incorrect values in the columns for age or sex.
+Next, there are no inaccurate values in the cp column, but the datatype of the column is incorrect as a result, the column's datatype was modified
+There are 3 incorrect values in the column trestbps. Because the mean and median are so close, filled them with the median.
+Next, there are 145 erroneous values in the chol column.  decided to leave that section for now.
+Later, there are numerous incorrect values in the columns ca, slope, and thal. 319 in the thal column, 206 in the slope column, and 412 in the ca column
+Because there are so many inaccurate values, deleted all the rows that match them and transferred the remaining data to a new data frame. 
+Some of the columns had improper data types, so I updated them to the proper ones.
+Because there are so many inaccurate values, I deleted all the rows that match them and transferred the remaining data to a new data frame. 
+Replaced the column values with their original meanings according to the dataset description.
+
+The following data transformation steps were performed for Arm:
+
+Some of the continuous numerical data was converted into labeled form based on domain knowledge.
+The label column, target, was dropped.
+Both the column names and row names were removed.
+The data was transformed into transactions using the transaction function.
