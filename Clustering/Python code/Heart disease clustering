@@ -1,0 +1,408 @@
+
+
+
+from sklearn.model_selection import train_test_split
+import random as rd
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import confusion_matrix
+#from sklearn.naive_bayes import BernoulliNB
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn import tree
+## conda install python-graphviz
+## restart kernel (click the little red x next to the Console)
+
+
+from sklearn.decomposition import LatentDirichletAllocation 
+import matplotlib.pyplot as plt
+import numpy as np
+
+from sklearn.metrics import silhouette_samples, silhouette_score
+import sklearn
+from sklearn.cluster import KMeans
+
+from sklearn import preprocessing
+
+import seaborn as sns
+import numpy as np
+import pandas as pd
+from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.metrics.pairwise import cosine_similarity
+import matplotlib.pyplot as plt
+from sklearn.manifold import MDS
+from mpl_toolkits.mplot3d import Axes3D
+from scipy.cluster.hierarchy import ward, dendrogram
+
+import pandas as pd 
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns 
+
+
+#reading the data 
+df = pd.read_csv('Cleaned_heart_cholestrol_data')
+
+#head of the dta a
+df.head()
+
+#colum names 
+df.columns
+
+#dropping waste columns 
+df.drop(columns = [ 'Unnamed: 0', 'index'], inplace = True )
+
+#checking
+df.head()
+
+#summary of the data 
+df.info()
+
+#!pip install yellowbrick
+# Elbow Method for K means
+# Import ElbowVisualizer
+
+## Using pca and reducing the dimensions 
+
+#selecting only numerical continuous data for the kmeans 
+X = df[['age','trestbps', 'chol', 'thalach','oldpeak']]
+X
+
+
+names = X.columns
+names
+
+#scaling the data 
+from sklearn import preprocessing
+
+d = preprocessing.normalize(X)
+scaled_df = pd.DataFrame(d, columns=names)
+
+scaled_df
+
+
+#performing pca for better visualisation of the data 
+from sklearn.decomposition import PCA
+  
+pca = PCA(n_components = 2)
+  
+X_pca = pca.fit_transform(scaled_df)
+  
+explained_variance = pca.explained_variance_ratio_
+
+
+X_pca
+
+X
+
+#visualising the sihouette
+from yellowbrick.cluster import KElbowVisualizer
+
+kmeans_model = KMeans()
+visualizer = KElbowVisualizer(kmeans_model, k=(2,30),metric='silhouette', timings= True)
+visualizer.fit(scaled_df)        
+visualizer.show()
+
+#performing kmeans with k values 2, 3, 4, 5 
+
+
+# k = 2 clusters 
+
+model = KMeans(n_clusters = 2, init = "k-means++")
+label = model.fit_predict(scaled_df)
+
+#labels of the cluster
+label
+#centroids of the cluster
+model.cluster_centers_
+#size of the clusetrs 
+model.size
+
+
+#plotting the clusters using the scatter plot 
+plt.figure(figsize=(8,8))
+uniq = np.unique(label)
+centers = np.array(model.cluster_centers_)
+for i in uniq:
+   plt.scatter(X_pca[label == i , 0] , X_pca[label == i , 1] , label = i)
+plt.legend()
+plt.title('K = 2', fontsize = 20)
+plt.xlabel('Principal component 1',fontsize = 15)
+plt.ylabel('Principal component 2',fontsize = 15)
+plt.show()
+
+
+#K= 3 clusters 
+
+model3 = KMeans(n_clusters = 3, init = "k-means++")
+label3 = model3.fit_predict(scaled_df)
+#labels of the clusters
+label3
+
+#plotting the clusters using the scatter plots 
+plt.figure(figsize=(10,10))
+uniq3 = np.unique(label3)
+centers3 = np.array(model3.cluster_centers_)
+for i in uniq3:
+   plt.scatter(X_pca[label3 == i , 0] , X_pca[label3 == i , 1] , label = i)
+plt.legend()
+plt.title('K = 3', fontsize = 20)
+plt.xlabel('Principal component 1',fontsize = 15)
+plt.ylabel('Principal component 2',fontsize = 15)
+plt.show()
+
+
+#k=4 clusters 
+
+model4 = KMeans(n_clusters = 4, init = "k-means++")
+label4 = model4.fit_predict(scaled_df)
+
+#cluster centers 
+centers4 = np.array(model4.cluster_centers_)
+centers4
+
+centers4[1]
+
+#plotting the clusters 
+plt.figure(figsize=(10,10))
+uniq4 = np.unique(label4)
+centers4 = np.array(model4.cluster_centers_)
+for i in uniq4:
+   plt.scatter(X_pca[label4 == i , 0] , X_pca[label4 == i , 1] , label = i)
+plt.legend()
+plt.title('K = 4', fontsize = 20)
+plt.xlabel('Principal component 1',fontsize = 15)
+plt.ylabel('Principal component 2',fontsize = 15)
+plt.show()
+
+
+
+#k = 5 
+
+model5 = KMeans(n_clusters = 5, init = "k-means++")
+label5 = model5.fit_predict(scaled_df)
+
+#plotting
+plt.figure(figsize=(10,10))
+uniq5 = np.unique(label5)
+centers5 = np.array(model5.cluster_centers_)
+for i in uniq5:
+   plt.scatter(X_pca[label5 == i , 0] , X_pca[label5 == i , 1] , label = i)
+
+#This is done to find the centroid for each clusters.
+plt.legend()
+plt.title('K = 5', fontsize = 20)
+plt.xlabel('Principal component 1',fontsize = 15)
+plt.ylabel('Principal component 2',fontsize = 15)
+plt.show()
+
+
+
+#as the data has a lable comparing the cluster label with the data label
+
+#choosing tw columns 
+B1  = X[['age','chol']]
+
+
+
+#labels added to dataset
+B1['cluster'] = label
+B1.head(5)
+
+#plotting the scatter plot using clusters labels from kmeans 
+fig, ax = plt.subplots()
+colors = {0:'red', 1:'blue'}
+grouped = B1.groupby('cluster')
+for key, group in grouped:
+    group.plot(ax=ax, kind='scatter', x='age', y='chol', label=key, color=colors[key])
+plt.title('Chol Vs Age')
+plt.show()
+
+
+A1 = df[['chol','age','target']]
+A1.head(5)
+
+
+#plotting the scatter plot using labels from the data 
+fig, ax = plt.subplots()
+colors = {0:'red', 1:'blue'}
+grouped = A1.groupby('target')
+for key, group in grouped:
+    group.plot(ax=ax, kind='scatter', x='age', y='chol', label=key, color=colors[key])
+plt.title('Chol Vs Age')
+plt.show()
+
+
+#checking the accuracy of the model as we have labelled data 
+y =df['target']
+
+correct_label = sum(y == label)
+
+print("Result: %d out of %d samples were correctly labeled." % (correct_label, y.size))
+
+
+#similairly above choosing other two columsn to compare label from data and cluster labels 
+
+B2 = df[['thalach','oldpeak']]
+
+A2 = df[['thalach','oldpeak','target']]
+
+
+#labels added to dataset
+B2['cluster'] = label
+B2
+
+A2
+#plotting
+fig, ax = plt.subplots()
+colors = {0:'red', 1:'black'}
+grouped = B2.groupby('cluster')
+for key, group in grouped:
+    group.plot(ax=ax, kind='scatter', x='thalach', y='oldpeak', label=key, color=colors[key])
+plt.title('oldpeak Vs thalach')
+plt.show()
+
+#plotting
+fig, ax = plt.subplots()
+colors = {0:'red', 1:'black'}
+grouped = A2.groupby('target')
+for key, group in grouped:
+    group.plot(ax=ax, kind='scatter', x='thalach', y='oldpeak', label=key, color=colors[key])
+plt.title('oldpeak Vs thalach ')
+plt.show()
+
+
+
+#for analysing the data after clusters are formed 
+
+new_data  = df.copy()
+
+
+#labels added to dataset
+new_data['cluster'] = label
+new_data.head(5)
+new_data['fbs'] = new_data.fbs.replace({True: ">120mg/dl", False: "<120mg/dl"})
+new_data.groupby('cluster').mean()
+k0 = new_data[new_data['cluster'] == 0]
+k0
+k1 = new_data[new_data['cluster'] == 1]
+k1
+k0['cp'].value_counts()
+k1['cp'].value_counts()
+k0['restecg'].value_counts()
+k1['restecg'].value_counts()
+k0['slope'].value_counts()
+k1['slope'].value_counts()
+k0['exang'].value_counts()
+k1['exang'].value_counts()
+k0['fbs'].value_counts()
+k1['fbs'].value_counts()
+k0['thal'].value_counts()
+k1['thal'].value_counts()
+
+
+
+
+#for 3D clusters performing pca with3 componenets 
+
+pca3 = PCA(n_components = 3)
+  
+X_pca3 = pca3.fit_transform(scaled_df)
+  
+explained_variance3 = pca3.explained_variance_ratio_
+
+X_pca3
+
+
+# # 2clusters 3D
+# 3d scatterplot using plotly
+Scene = dict(xaxis = dict(title  = 'Principal component 1'),yaxis = dict(title  = 'Principal component 2'),zaxis = dict(title  = 'Principal component 3'))
+
+# model.labels_ is nothing but the predicted clusters i.e y_clusters
+labels = model.labels_
+trace = go.Scatter3d(x=X_pca3[:, 0], y=X_pca3[:, 1], z=X_pca3[:, 2], mode='markers',marker=dict(color = labels, size= 10, line=dict(color= 'black',width = 10)))
+layout = go.Layout(margin=dict(l=0,r=0),scene = Scene,height = 800,width = 800)
+data = [trace]
+fig = go.Figure(data = data, layout = layout)
+fig.show()
+fig.write_html("2clusters.html")
+
+
+# # 3clusters 3D
+
+# 3d scatterplot using plotly
+Scene = dict(xaxis = dict(title  = 'Principal component 1'),yaxis = dict(title  = 'Principal component 2'),zaxis = dict(title  = 'Principal component 3'))
+
+# model.labels_ is nothing but the predicted clusters i.e y_clusters
+labels = model3.labels_
+trace = go.Scatter3d(x=X_pca3[:, 0], y=X_pca3[:, 1], z=X_pca3[:, 2], mode='markers',marker=dict(color = labels, size= 10, line=dict(color= 'black',width = 10)))
+layout = go.Layout(margin=dict(l=0,r=0),scene = Scene,height = 800,width = 800)
+data = [trace]
+fig = go.Figure(data = data, layout = layout)
+fig.show()
+fig.write_html("3clusters.html")
+
+
+# # 4 clusters 3D
+
+
+Scene = dict(xaxis = dict(title  = 'Principal component 1'),yaxis = dict(title  = 'Principal component 2'),zaxis = dict(title  = 'Principal component 3'))
+
+# model.labels_ is nothing but the predicted clusters i.e y_clusters
+labels = model4.labels_
+trace = go.Scatter3d(x=X_pca3[:, 0], y=X_pca3[:, 1], z=X_pca3[:, 2], mode='markers',marker=dict(color = labels, size= 10, line=dict(color= 'black',width = 10)))
+layout = go.Layout(margin=dict(l=0,r=0),scene = Scene,height = 800,width = 800)
+data = [trace]
+fig = go.Figure(data = data, layout = layout)
+fig.show()
+fig.write_html("4clusters.html")
+
+
+# # 5 clusters 3D
+
+Scene = dict(xaxis = dict(title  = 'Principal component 1'),yaxis = dict(title  = 'Principal component 2'),zaxis = dict(title  = 'Principal component 3'))
+
+# model.labels_ is nothing but the predicted clusters i.e y_clusters
+labels = model5.labels_
+trace = go.Scatter3d(x=X_pca3[:, 0], y=X_pca3[:, 1], z=X_pca3[:, 2], mode='markers',marker=dict(color = labels, size= 10, line=dict(color= 'black',width = 10)))
+layout = go.Layout(margin=dict(l=0,r=0),scene = Scene,height = 800,width = 800)
+data = [trace]
+fig = go.Figure(data = data, layout = layout)
+fig.show()
+fig.write_html("5clusters.html")
+
+
+B2 = df[['age','chol','thalach']]
+
+B2['cluster'] = label
+B2.head(5)
+
+# 3d scatterplot using plotly
+Scene = dict(xaxis = dict(title  = 'age'),yaxis = dict(title  = 'chol'),zaxis = dict(title  = 'thalach'))
+
+# model.labels_ is nothing but the predicted clusters i.e y_clusters
+labels = model3D2.labels_
+trace = go.Scatter3d(x=B2.values[:, 0], y=B2.values[:, 1], z=B2.values[:, 2], mode='markers',marker=dict(color = labels, size= 10, line=dict(color= 'black',width = 10)))
+layout = go.Layout(margin=dict(l=0,r=0),scene = Scene,height = 800,width = 800)
+data = [trace]
+fig = go.Figure(data = data, layout = layout)
+fig.show()
+fig.write_html("3clusters.html")
+
+A2 = df[['age','chol','thalach','target']]
+
+A2.head()
+
+
+# In[86]:
+
+
+Scene = dict(xaxis = dict(title  = 'age'),yaxis = dict(title  = 'chol'),zaxis = dict(title  = 'thalach'))
+
+# model.labels_ is nothing but the predicted clusters i.e y_clusters
+labels = A2['target']
+trace = go.Scatter3d(x=B2.values[:, 0], y=B2.values[:, 1], z=B2.values[:, 2], mode='markers',marker=dict(color = labels, size= 10, line=dict(color= 'black',width = 10)))
+layout = go.Layout(margin=dict(l=0,r=0),scene = Scene,height = 800,width = 800)
+data = [trace]
+fig = go.Figure(data = data, layout = layout)
+fig.show()
+fig.write_html("3clusters.html")
+
