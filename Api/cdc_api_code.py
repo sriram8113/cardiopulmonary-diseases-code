@@ -10,7 +10,7 @@ import requests
 import re
 
 #Getting data from data.cdc.gov API
-#key = TaBYo8CuXxebOBgt7jjV6xdAb
+
 
 
 #key = XXX
@@ -18,9 +18,9 @@ import re
 #password = <xxx>
 
 client = Socrata('data.cdc.gov',
-                 'TaBYo8CuXxebOBgt7jjV6xdAb',
+                 'XXXXXXX',
                 username="sriramarabelli@gmail.com",
-                password="Sriram@1999")
+                password="XXXXXX")
 results = client.get("u6jv-9ijr", limit=400000)
 results_df = pd.DataFrame.from_records(results)
 
