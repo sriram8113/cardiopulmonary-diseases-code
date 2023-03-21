@@ -1,3 +1,5 @@
+# import required packages 
+
 import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
@@ -16,10 +18,12 @@ from eli5.sklearn import PermutationImportance
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
 
+#Reading the data 
 df = pd.read_csv('Cleaned_heart_cholestrol_data.csv')
 
 print(df.head(5))
 
+# sleecting only numerical continous data 
 X = df[['age', 'trestbps','chol','thalach', "oldpeak"]]
 
 print(X)
@@ -31,20 +35,17 @@ print(X.describe())
 
 print(X.info())
 
-
+# normalising the data 
 names = X.columns
 
 from sklearn import preprocessing
 
 d = preprocessing.normalize(X)
 X = pd.DataFrame(d, columns=names)
-
-
 X
-
-
 y = df['target']
 
+# test train splitting 
 
 from sklearn.model_selection import train_test_split
 
@@ -54,7 +55,7 @@ print(X_train)
 
 print(y_train)
 
-##########################################################################
+################################### Grid search to find best parameters 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 
@@ -82,9 +83,12 @@ print("Best accuracy score: ", grid_search.best_score_)
 
 ###########################################################################
 
+#Model Implementation 
 
 decision_tree = DecisionTreeClassifier(random_state=0, max_depth = 5, min_samples_split=2,min_samples_leaf = 3)
 decision_tree = decision_tree.fit(X_train, y_train)
+
+# Accuracy of testing and training sets 
 
 fit_accuracy = decision_tree.score(X_train, y_train)
 test_accuracy = decision_tree.score(X_test, y_test)
@@ -92,6 +96,8 @@ test_accuracy = decision_tree.score(X_test, y_test)
 print("Train accuracy: {:.2%}".format(fit_accuracy))
 print("Test accuracy: {:.2%}".format(test_accuracy))   
 print(decision_tree)
+
+#plotting tree
 
 tree.plot_tree(decision_tree)
 plt.show()
@@ -118,11 +124,16 @@ graph = graphviz.Source(dot_data, format="png")
 graph
 graph.render("decision_tree_graphivz11")
 
+#Making Prediction 
 decision_tree_prediction = decision_tree.predict(X_test)
+
+#Confusion Matrix 
 
 bn_matrix_R = confusion_matrix(y_test, decision_tree_prediction)
 print("\nThe confusion matrix is:")
 print(bn_matrix_R)
+
+# Finding Important Features 
 
 FeatureImpR=decision_tree.feature_importances_   
 indicesR = np.argsort(FeatureImpR)[::-1]
@@ -139,11 +150,15 @@ for f in range(X_train.shape[1]):
 labels_predicted = decision_tree.predict(X_test)
 plt.subplots(figsize=(10,5))
 
+#Plotting confusion matrix 
+
 conf_mat = confusion_matrix(y_test, labels_predicted)
 sns.heatmap(conf_mat, annot=True, fmt='d', cmap='Blues', cbar=False)
 plt.xlabel('Predicted Values')
 plt.ylabel('Actual Values')
 plt.title('Decision Tree: Confusion Matrix')
+plt.show()
+
 print(conf_mat)
 print(classification_report(y_test, labels_predicted))
 
@@ -152,12 +167,16 @@ from sklearn.naive_bayes import GaussianNB
 
 from yellowbrick.classifier import ClassificationReport
 from yellowbrick.datasets import load_occupancy
+
+# visualising classification report 
+
 visualizer = ClassificationReport(decision_tree, support=True)
 
 visualizer.fit(X_train, y_train)        # Fit the visualizer and the model
 visualizer.score(X_test, y_test)        # Evaluate the model on the test data
 visualizer.show()
 
+#Finding weights of the features 
 perm = PermutationImportance(decision_tree, random_state=1).fit(X_test, y_test)
 eli5.show_weights(perm, feature_names = X_test.columns.tolist())
 
@@ -165,7 +184,7 @@ html = eli5.show_weights(perm, feature_names=X_test.columns.tolist()).data
 with open('feature_importance3.html', 'wb') as f:
     f.write(html.encode('utf-8'))
 
-#############################################################################################
+########################################################## Similar code with different data and different parameters ################################################
 
 df = pd.get_dummies(df, columns = ['sex', 'cp', 'fbs', 'restecg', 'exang', 'slope', 'thal'], drop_first=True)
        
